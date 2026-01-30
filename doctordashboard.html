@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - Northwood Clinic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #3a86ff;
+            --light-blue: #a2d2ff;
+            --soft-blue: #f0f8ff;
+            --accent-green: #80ed99;
+            --accent-purple: #9d4edd;
+            --accent-orange: #ff9e00;
+            --white: #ffffff;
+            --off-white: #f9f9f9;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333333;
+            --text-dark: #222222;
+            --text-light: #555555;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --header-height: 80px;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--off-white);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        /* Sticky Sidebar Menu */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+            border: 3px solid white;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            text-align: center;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .sidebar-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sidebar-nav-link {
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .sidebar-nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-left-color: white;
+        }
+
+        /* Sidebar Footer with Logout */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logout {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .sidebar-logout:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            background: white;
+            padding: 20px 5%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .school-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .school-logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .school-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .dashboard-time {
+            font-size: 1rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Doctor Container */
+        .doctor-container {
+            padding: 30px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px var(--shadow);
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header h2 i {
+            color: var(--primary-blue);
+        }
+
+        /* Dashboard Stats */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-blue);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .stat-icon.today {
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+        }
+
+        .stat-icon.upcoming {
+            background: linear-gradient(135deg, var(--accent-green), #80ed99);
+        }
+
+        .stat-icon.completed {
+            background: linear-gradient(135deg, var(--accent-purple), #b388eb);
+        }
+
+        .stat-icon.reports {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+
+        .stat-content h3 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .stat-content p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--soft-blue);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--light-blue);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-header h3 {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-form-appointments {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .filter-form-reports {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .filter-form-attendance {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.date-range {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+            box-shadow: 0 8px 20px rgba(58, 134, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: #2a75ff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(58, 134, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light-gray);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-success {
+            background-color: var(--accent-green);
+            color: white;
+            box-shadow: 0 8px 20px rgba(128, 237, 153, 0.3);
+        }
+
+        .btn-success:hover {
+            background-color: #70dd8a;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(128, 237, 153, 0.4);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            background-color: var(--soft-blue);
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-align: left;
+            padding: 18px 15px;
+            border-bottom: 2px solid var(--light-blue);
+        }
+
+        .data-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            color: var(--text-dark);
+        }
+
+        .data-table tr:hover {
+            background-color: var(--soft-blue);
+        }
+
+        .status-badge {
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 158, 0, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .status-confirmed {
+            background-color: rgba(128, 237, 153, 0.2);
+            color: var(--accent-green);
+        }
+
+        .status-completed {
+            background-color: rgba(58, 134, 255, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .status-cancelled {
+            background-color: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-view {
+            color: var(--primary-blue);
+            background-color: rgba(58, 134, 255, 0.1);
+        }
+
+        .btn-view:hover {
+            background-color: rgba(58, 134, 255, 0.2);
+        }
+
+        .btn-edit {
+            color: var(--accent-green);
+            background-color: rgba(128, 237, 153, 0.1);
+        }
+
+        .btn-edit:hover {
+            background-color: rgba(128, 237, 153, 0.2);
+        }
+
+        .btn-delete {
+            color: #ff6b6b;
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        .btn-delete:hover {
+            background-color: rgba(255, 107, 107, 0.2);
+        }
+
+        /* Medical Reports */
+        .medical-reports-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .medical-report-card {
+            background: var(--soft-blue);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            transition: var(--transition);
+            border: 1px solid var(--light-blue);
+        }
+
+        .medical-report-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.1);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .report-patient-info h3 {
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+        }
+
+        .report-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .report-date {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .report-summary {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .report-details {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .report-details h4 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .report-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        /* Attendance Management */
+        .attendance-management {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .attendance-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .attendance-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .time-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .time-control {
+            text-align: center;
+        }
+
+        .time-display {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .time-status {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .attendance-history {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .history-times {
+            display: flex;
+            gap: 20px;
+        }
+
+        .history-time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .time-value {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .profile-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 5px solid var(--light-blue);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .change-avatar-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .change-avatar-btn:hover {
+            background: #2a75ff;
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .profile-role {
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .profile-specialization {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+        }
+
+        /* Account Security Forms */
+        .account-security-form {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--soft-blue);
+            border-radius: var(--border-radius);
+        }
+
+        .account-security-form:last-child {
+            margin-bottom: 0;
+        }
+
+        .account-security-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .account-security-form .btn {
+            margin-top: 15px;
+            padding: 14px 25px;
+            width: 100%;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Print Styles */
+        @media print {
+            .sidebar, .dashboard-header, .filter-section, .export-buttons, .action-buttons, .no-print {
+                display: none !important;
+            }
+           
+            body {
+                background: white;
+                margin: 0;
+            }
+           
+            .main-content {
+                margin-left: 0;
+            }
+           
+            .dashboard-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            :root {
+                --sidebar-width: 220px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+           
+            .attendance-management, .profile-section {
+                grid-template-columns: 1fr;
+            }
+           
+            .filter-form-appointments,
+            .filter-form-reports,
+            .filter-form-attendance {
+                grid-template-columns: repeat(2, 1fr);
+            }
+           
+            .form-group.date-range {
+                grid-column: span 2;
+            }
+           
+            .filter-buttons {
+                grid-column: span 2;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 70px;
+            }
+           
+            .sidebar-header {
+                padding: 20px 10px;
+            }
+           
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+           
+            .user-info, .sidebar-nav-link span {
+                display: none;
+            }
+           
+            .sidebar-nav-link {
+                justify-content: center;
+                padding: 15px;
+            }
+           
+            .sidebar-nav-link i {
+                font-size: 1.2rem;
+            }
+           
+            .sidebar-logout span {
+                display: none;
+            }
+           
+            .school-name {
+                font-size: 1.2rem;
+            }
+           
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .filter-form-appointments,
+            .filter-form-reports,
+            .filter-form-attendance {
+                grid-template-columns: 1fr;
+            }
+           
+            .form-group.date-range {
+                grid-column: span 1;
+            }
+           
+            .filter-buttons {
+                grid-column: span 1;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .report-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .report-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .history-times {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .doctor-container {
+                padding: 20px 3%;
+            }
+
+            .dashboard-section {
+                padding: 25px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .stat-content h3 {
+                font-size: 1.8rem;
+            }
+
+            .time-display {
+                font-size: 2.5rem;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        /* No Data Message */
+        .no-data {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-light);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--medium-gray);
+        }
+
+        .no-data h3 {
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Sidebar Menu -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="user-avatar" id="sidebarUserAvatar">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="user-info">
+                <div class="user-name" id="sidebarUserName">Dr. John Doe</div>
+                <div class="user-role" id="sidebarUserRole">Medical Doctor</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-links">
+                <button class="sidebar-nav-link active" data-section="dashboard-overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard Overview</span>
+                </button>
+                <button class="sidebar-nav-link" data-section="appointments">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </button>
+                <button class="sidebar-nav-link" data-section="medical-reports">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Medical Reports</span>
+                </button>
+                <button class="sidebar-nav-link" data-section="attendance">
+                    <i class="fas fa-clock"></i>
+                    <span>Attendance</span>
+                </button>
+                <button class="sidebar-nav-link" data-section="profile">
+                    <i class="fas fa-user-md"></i>
+                    <span>Profile</span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="sidebar-logout" id="sidebarLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="school-info">
+                <div class="school-logo-icon">
+                    <img id="dashboardSchoolLogo" src="" alt="School Logo"
+                         style="width: 100%; height: 100%; object-fit: contain; display: none;">
+                    <i class="fas fa-hospital-alt" id="dashboardLogoIcon"></i>
+                </div>
+                <div class="school-name" id="dashboardSchoolName">Northwood Clinic</div>
+            </div>
+            <div class="dashboard-time" id="currentDateTime">
+                <i class="fas fa-clock"></i>
+                <span id="timeDisplay">--:--:--</span>
+            </div>
+        </header>
+
+        <!-- Doctor Dashboard Content -->
+        <div class="doctor-container">
+            <!-- Dashboard Overview Section (Active by default) -->
+            <section class="dashboard-section active" id="dashboard-overview">
+                <div class="section-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+                    <button class="btn btn-primary" id="refreshDashboardBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+               
+                <!-- Welcome Message -->
+                <div class="filter-section" style="margin-bottom: 40px;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-blue), var(--accent-green)); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; font-weight: bold;" id="welcomeAvatar">
+                            DR
+                        </div>
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 5px;" id="welcomeDoctorName">Welcome, Dr. John Doe</h3>
+                            <p style="color: var(--text-light);" id="welcomeMessage">Manage appointments, medical reports, and track your attendance from this dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Dashboard Statistics -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon today">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overviewTodayAppointments">0</h3>
+                            <p>Today's Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon upcoming">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overviewUpcomingAppointments">0</h3>
+                            <p>Upcoming Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overviewCompletedAppointments">0</h3>
+                            <p>Completed Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon reports">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overviewTotalReports">0</h3>
+                            <p>Medical Reports</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-orange), #ffb347);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overviewAttendanceRate">0%</h3>
+                            <p>Attendance Rate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-purple), #b388eb);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overviewTotalPatients">0</h3>
+                            <p>Total Patients</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Quick Actions -->
+                <div class="filter-section">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button class="btn btn-primary" onclick="switchToSection('appointments')">
+                            <i class="fas fa-calendar-plus"></i> View Appointments
+                        </button>
+                        <button class="btn btn-success" onclick="switchToSection('medical-reports')">
+                            <i class="fas fa-file-medical-alt"></i> Create Report
+                        </button>
+                        <button class="btn btn-primary" onclick="switchToSection('attendance')">
+                            <i class="fas fa-clock"></i> Mark Attendance
+                        </button>
+                        <button class="btn btn-secondary" onclick="switchToSection('profile')">
+                            <i class="fas fa-user-edit"></i> Update Profile
+                        </button>
+                    </div>
+                </div>
+               
+                <!-- Recent Activity -->
+                <div style="background: white; border-radius: var(--border-radius); padding: 30px; margin-top: 40px; box-shadow: 0 10px 30px var(--shadow);">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-history"></i> Recent Activity
+                    </h3>
+                    <div id="recentActivityList">
+                        <div style="text-align: center; padding: 30px; color: var(--text-light);">
+                            <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>No recent activity to display</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section class="dashboard-section" id="appointments">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-check"></i> Appointment Management</h2>
+                    <button class="btn btn-primary" id="refreshAppointmentsBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+               
+                <!-- Appointments Statistics -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon today">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="todayAppointmentsCount">0</h3>
+                            <p>Today's Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon upcoming">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="upcomingAppointmentsCount">0</h3>
+                            <p>Upcoming</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="completedAppointmentsCount">0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon reports">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalPatients">0</h3>
+                            <p>Total Patients</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Filter Appointments -->
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3><i class="fas fa-filter"></i> Filter Appointments</h3>
+                    </div>
+                    <form id="filterAppointmentsForm" class="filter-form filter-form-appointments">
+                        <div class="form-group date-range">
+                            <label for="filterAppointmentDate" class="form-label">Date Range</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="date" id="filterAppointmentDateFrom" class="form-input" style="flex: 1;">
+                                <input type="date" id="filterAppointmentDateTo" class="form-input" style="flex: 1;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterAppointmentStatus" class="form-label">Status</label>
+                            <select id="filterAppointmentStatus" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterAppointmentType" class="form-label">Patient Type</label>
+                            <select id="filterAppointmentType" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="student">Student</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                        </div>
+                        <div class="filter-buttons">
+                            <button type="button" class="btn btn-primary" id="applyAppointmentFilter">
+                                <i class="fas fa-search"></i> Apply Filter
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetAppointmentFilter">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+               
+                <!-- Appointments Table -->
+                <div class="table-container">
+                    <table class="data-table" id="appointmentsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Patient Name</th>
+                                <th>Type</th>
+                                <th>ID Number</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="no-data" id="noAppointments">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Appointments Found</h3>
+                        <p>All appointments will appear here</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Medical Reports Section -->
+            <section class="dashboard-section" id="medical-reports">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-medical"></i> Medical Reports Management</h2>
+                    <button class="btn btn-success" id="addReportBtn">
+                        <i class="fas fa-plus"></i> Add New Medical Report
+                    </button>
+                </div>
+               
+                <!-- Filter Reports -->
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3><i class="fas fa-filter"></i> Filter Reports</h3>
+                    </div>
+                    <form id="filterReportsForm" class="filter-form filter-form-reports">
+                        <div class="form-group date-range">
+                            <label for="filterReportDate" class="form-label">Date Range</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="date" id="filterReportDateFrom" class="form-input" style="flex: 1;">
+                                <input type="date" id="filterReportDateTo" class="form-input" style="flex: 1;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterReportStatus" class="form-label">Status</label>
+                            <select id="filterReportStatus" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                                <option value="follow_up">Follow-up Required</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterReportPatientType" class="form-label">Patient Type</label>
+                            <select id="filterReportPatientType" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="student">Student</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                        </div>
+                        <div class="filter-buttons">
+                            <button type="button" class="btn btn-primary" id="applyReportFilter">
+                                <i class="fas fa-search"></i> Apply Filter
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetReportFilter">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+               
+                <!-- Medical Reports List -->
+                <div class="medical-reports-list" id="medicalReportsList">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+                <div class="no-data" id="noMedicalReports">
+                    <i class="fas fa-file-medical-alt"></i>
+                    <h3>No Medical Reports</h3>
+                    <p>Create medical reports for patients after consultations</p>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section class="dashboard-section" id="attendance">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> Attendance Management</h2>
+                    <button class="btn btn-primary" onclick="printAttendanceReport()" class="no-print">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                </div>
+               
+                <div class="attendance-management">
+                    <!-- Time In/Out Controls -->
+                    <div class="attendance-card">
+                        <h3><i class="fas fa-clock"></i> Today's Attendance</h3>
+                        <div class="time-controls">
+                            <div class="time-control">
+                                <div class="time-display" id="currentTime">--:--</div>
+                                <div class="time-status" id="attendanceStatus">Not Clocked In</div>
+                                <div id="timeInControls">
+                                    <button class="btn btn-success" id="timeInBtn" style="width: 100%;">
+                                        <i class="fas fa-sign-in-alt"></i> Time In
+                                    </button>
+                                </div>
+                                <div id="timeOutControls" style="display: none;">
+                                    <button class="btn btn-primary" id="timeOutBtn" style="width: 100%;">
+                                        <i class="fas fa-sign-out-alt"></i> Time Out
+                                    </button>
+                                </div>
+                            </div>
+                           
+                            <div class="attendance-summary">
+                                <h4 style="margin-bottom: 15px; color: var(--primary-blue);">Today's Summary</h4>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                    <div style="background: var(--soft-blue); padding: 15px; border-radius: var(--border-radius-sm); text-align: center;">
+                                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary-blue);" id="timeInValue">--:--</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">Time In</div>
+                                    </div>
+                                    <div style="background: var(--soft-blue); padding: 15px; border-radius: var(--border-radius-sm); text-align: center;">
+                                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary-blue);" id="timeOutValue">--:--</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">Time Out</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <!-- This Month Overview -->
+                    <div class="attendance-card">
+                        <h3><i class="fas fa-calendar-alt"></i> This Month Overview</h3>
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <div style="text-align: center; padding: 20px; background: var(--soft-blue); border-radius: var(--border-radius-sm);">
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-blue);" id="workingDays">0</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-light);">Working Days</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--soft-blue); border-radius: var(--border-radius-sm);">
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-blue);" id="presentDays">0</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-light);">Present Days</div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div>
+                            <h4 style="margin-bottom: 15px; color: var(--primary-blue);">Performance</h4>
+                            <div style="background: var(--soft-blue); padding: 20px; border-radius: var(--border-radius-sm);">
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>Attendance Rate</span>
+                                        <span id="attendanceRate">0%</span>
+                                    </div>
+                                    <div style="height: 10px; background: white; border-radius: 5px; overflow: hidden;">
+                                        <div id="attendanceBar" style="height: 100%; background: var(--primary-blue); width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                    <div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">Avg. Hours/Day</div>
+                                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="avgHours">0.0h</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">Total Hours</div>
+                                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="totalHours">0.0h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Attendance History -->
+                <div class="attendance-card">
+                    <h3><i class="fas fa-history"></i> Attendance History - 2026</h3>
+                   
+                    <!-- Filter Attendance History -->
+                    <div class="filter-section" style="margin-top: 20px; margin-bottom: 25px;">
+                        <div class="filter-header">
+                            <h3><i class="fas fa-filter"></i> Filter Attendance History</h3>
+                        </div>
+                        <form id="filterAttendanceHistoryForm" class="filter-form filter-form-attendance">
+                            <div class="form-group">
+                                <label for="filterHistoryMonth" class="form-label">Month</label>
+                                <select id="filterHistoryMonth" class="form-select">
+                                    <option value="1">January 2026</option>
+                                    <option value="2">February 2026</option>
+                                    <option value="3">March 2026</option>
+                                    <option value="4">April 2026</option>
+                                    <option value="5">May 2026</option>
+                                    <option value="6">June 2026</option>
+                                    <option value="7">July 2026</option>
+                                    <option value="8">August 2026</option>
+                                    <option value="9">September 2026</option>
+                                    <option value="10">October 2026</option>
+                                    <option value="11">November 2026</option>
+                                    <option value="12">December 2026</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterHistoryStatus" class="form-label">Status</label>
+                            <select id="filterHistoryStatus" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="late">Late</option>
+                                <option value="half_day">Half Day</option>
+                            </select>
+                        </div>
+                        <div class="filter-buttons">
+                            <button type="button" class="btn btn-primary" id="applyHistoryFilter">
+                                <i class="fas fa-search"></i> Apply Filter
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetHistoryFilter">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+               
+                <!-- Attendance History Table -->
+                <div class="attendance-history">
+                    <div class="history-item" style="background: var(--soft-blue); font-weight: 600;">
+                        <div class="history-date">Date</div>
+                        <div class="history-times">
+                            <div class="history-time">
+                                <div class="time-label">Time In</div>
+                            </div>
+                            <div class="history-time">
+                                <div class="time-label">Time Out</div>
+                            </div>
+                            <div class="history-time">
+                                <div class="time-label">Total Hours</div>
+                            </div>
+                            <div class="history-time">
+                                <div class="time-label">Status</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="attendanceHistoryList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                    <div class="no-data" id="noAttendanceHistory" style="padding: 30px;">
+                        <i class="fas fa-history"></i>
+                        <h3>No Attendance History</h3>
+                        <p>Attendance records will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section class="dashboard-section" id="profile">
+            <div class="section-header">
+                <h2><i class="fas fa-user-md"></i> Doctor Profile</h2>
+            </div>
+           
+            <div class="profile-section">
+                <!-- Profile Information -->
+                <div class="profile-card">
+                    <h3><i class="fas fa-id-card"></i> Profile Information</h3>
+                   
+                    <div class="profile-info">
+                        <div class="profile-avatar" id="doctorAvatar">
+                            <div id="avatarInitials">DR</div>
+                            <img id="avatarImage" src="" alt="Doctor Avatar" style="display: none;">
+                            <button class="change-avatar-btn" id="changeAvatarBtn">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                       
+                        <div class="profile-name" id="doctorName">Dr. John Doe</div>
+                        <div class="profile-role" id="doctorRole">Medical Doctor</div>
+                        <div class="profile-specialization" id="doctorSpecialization">General Physician</div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="profileEmail" class="form-label">Email Address</label>
+                        <input type="email" id="profileEmail" class="form-input" placeholder="Enter your email address">
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="profilePhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="profilePhone" class="form-input" placeholder="Enter your phone number">
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="profileSpecialization" class="form-label">Medical Specialization</label>
+                        <input type="text" id="profileSpecialization" class="form-input" placeholder="Enter your specialization">
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="profileBio" class="form-label">Professional Bio</label>
+                        <textarea id="profileBio" class="form-textarea" placeholder="Write about your professional experience and qualifications"></textarea>
+                    </div>
+                   
+                    <button class="btn btn-primary" id="saveProfileBtn" style="width: 100%; margin-top: 20px; padding: 14px;">
+                        <i class="fas fa-save"></i> Save Profile Information
+                    </button>
+                </div>
+               
+                <!-- Account Security -->
+                <div class="profile-card">
+                    <h3><i class="fas fa-shield-alt"></i> Account Security</h3>
+                   
+                    <div class="account-security-form">
+                        <form id="changeUsernameForm">
+                            <div class="form-group">
+                                <label for="currentUsername" class="form-label">Current Username</label>
+                                <input type="text" id="currentUsername" class="form-input" readonly>
+                            </div>
+                           
+                            <div class="form-group">
+                                <label for="newUsername" class="form-label">New Username</label>
+                                <input type="text" id="newUsername" class="form-input" placeholder="Enter new username">
+                            </div>
+                           
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-edit"></i> Change Username
+                            </button>
+                        </form>
+                    </div>
+                   
+                    <div class="account-security-form">
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
+                            </div>
+                           
+                            <div class="form-group">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+                            </div>
+                           
+                            <div class="form-group">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password">
+                            </div>
+                           
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+    <!-- Medical Report Modal -->
+    <div class="modal-overlay" id="medicalReportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-medical"></i> <span id="modalReportTitle">Create Medical Report</span></h2>
+                <button class="close-modal" id="closeMedicalReportModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="medicalReportForm">
+                    <div class="form-group">
+                        <label for="reportPatientName" class="form-label">Patient Name *</label>
+                        <input type="text" id="reportPatientName" class="form-input" required>
+                    </div>
+                   
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportPatientId" class="form-label">Patient ID *</label>
+                            <input type="text" id="reportPatientId" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportPatientType" class="form-label">Patient Type *</label>
+                            <select id="reportPatientType" class="form-select" required>
+                                <option value="">Select type</option>
+                                <option value="student">Student</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportDate" class="form-label">Consultation Date *</label>
+                            <input type="date" id="reportDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportTime" class="form-label">Consultation Time *</label>
+                            <input type="time" id="reportTime" class="form-input" required>
+                        </div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="reportSymptoms" class="form-label">Symptoms & Complaints *</label>
+                        <textarea id="reportSymptoms" class="form-textarea" placeholder="Describe the patient's symptoms and complaints" required></textarea>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="reportDiagnosis" class="form-label">Diagnosis *</label>
+                        <textarea id="reportDiagnosis" class="form-textarea" placeholder="Enter the medical diagnosis" required></textarea>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="reportTreatment" class="form-label">Treatment Provided *</label>
+                        <textarea id="reportTreatment" class="form-textarea" placeholder="Describe the treatment provided, medications prescribed, etc." required></textarea>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="reportFollowUp" class="form-label">Follow-up Recommendations</label>
+                        <textarea id="reportFollowUp" class="form-textarea" placeholder="Enter any follow-up recommendations or referrals"></textarea>
+                    </div>
+                   
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportDoctorName" class="form-label">Doctor's Name *</label>
+                            <input type="text" id="reportDoctorName" class="form-input" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportStatus" class="form-label">Report Status</label>
+                            <select id="reportStatus" class="form-select">
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                                <option value="follow_up">Follow-up Required</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="saveReportBtn">
+                            <i class="fas fa-save"></i> Save Report
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelReportBtn">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Details Modal -->
+    <div class="modal-overlay" id="appointmentDetailsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-alt"></i> Appointment Details</h2>
+                <button class="close-modal" id="closeAppointmentDetailsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="appointmentDetailsContent">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DOCTOR AUTHENTICATION & REDIRECTION ==========
+       
+        // Check if user is logged in and is a doctor
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+           
+            // Redirect to index.html if not logged in or not doctor
+            if (!currentUser || currentUser.role !== 'doctor') {
+                alert('Access denied. Please login as doctor.');
+                window.location.href = 'index.html';
+                return;
+            }
+           
+            // Display doctor user info
+            displayDoctorInfo(currentUser);
+            loadDoctorProfile(currentUser);
+           
+            // Load initial data
+            loadDashboardOverview();
+            loadAppointments();
+            loadMedicalReports();
+            loadAttendanceData();
+           
+            // Update current time display
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+           
+            // Update date time in header
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+           
+            // Check today's attendance status
+            checkTodayAttendance();
+           
+            // Set current date for new reports
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reportDate').value = today;
+           
+            // Set current time for new reports
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('reportTime').value = `${hours}:${minutes}`;
+        });
+
+        // Display doctor information
+        function displayDoctorInfo(user) {
+            const sidebarUserAvatar = document.getElementById('sidebarUserAvatar');
+            const sidebarUserName = document.getElementById('sidebarUserName');
+            const sidebarUserRole = document.getElementById('sidebarUserRole');
+            const dashboardSchoolName = document.getElementById('dashboardSchoolName');
+            const welcomeDoctorName = document.getElementById('welcomeDoctorName');
+            const welcomeAvatar = document.getElementById('welcomeAvatar');
+           
+            // Set school name from localStorage if available
+            const schoolSettings = JSON.parse(localStorage.getItem('northwoodSchoolSettings'));
+            if (schoolSettings) {
+                if (schoolSettings.schoolName) {
+                    dashboardSchoolName.textContent = schoolSettings.schoolName;
+                }
+               
+                // Update logo if exists
+                const dashboardLogoImg = document.getElementById('dashboardSchoolLogo');
+                const dashboardLogoIcon = document.getElementById('dashboardLogoIcon');
+                if (schoolSettings.logo) {
+                    dashboardLogoImg.src = schoolSettings.logo;
+                    dashboardLogoImg.style.display = 'block';
+                    dashboardLogoIcon.style.display = 'none';
+                } else {
+                    dashboardLogoImg.style.display = 'none';
+                    dashboardLogoIcon.style.display = 'block';
+                }
+            }
+           
+            // Set user info in sidebar
+            sidebarUserName.textContent = `Dr. ${user.firstName} ${user.lastName}`;
+            sidebarUserRole.textContent = user.specialization || 'Medical Doctor';
+           
+            // Set welcome message
+            welcomeDoctorName.textContent = `Welcome, Dr. ${user.firstName} ${user.lastName}`;
+            welcomeAvatar.textContent = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+           
+            // Display user avatar
+            const avatar = localStorage.getItem(`doctor_avatar_${user.id}`) || '';
+            if (avatar) {
+                sidebarUserAvatar.innerHTML = `<img src="${avatar}" alt="${user.firstName} ${user.lastName}">`;
+            } else {
+                sidebarUserAvatar.innerHTML = `<div>${user.firstName.charAt(0)}${user.lastName.charAt(0)}</div>`;
+            }
+        }
+
+        // Update date and time in header
+        function updateDateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: true });
+            const dateString = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+           
+            document.getElementById('timeDisplay').textContent = `${dateString} | ${timeString}`;
+        }
+
+        // Listen for storage events to update logo if changed in admin dashboard
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'northwoodSchoolSettings') {
+                const settings = JSON.parse(e.newValue);
+                const dashboardLogoImg = document.getElementById('dashboardSchoolLogo');
+                const dashboardLogoIcon = document.getElementById('dashboardLogoIcon');
+                const schoolName = document.getElementById('dashboardSchoolName');
+               
+                if (settings) {
+                    if (settings.schoolName) {
+                        schoolName.textContent = settings.schoolName;
+                    }
+                   
+                    if (settings.logo) {
+                        dashboardLogoImg.src = settings.logo;
+                        dashboardLogoImg.style.display = 'block';
+                        dashboardLogoIcon.style.display = 'none';
+                    } else {
+                        dashboardLogoImg.style.display = 'none';
+                        dashboardLogoIcon.style.display = 'block';
+                    }
+                }
+            }
+        });
+
+        function loadDoctorProfile(user) {
+            // Load doctor profile data
+            document.getElementById('doctorName').textContent = `Dr. ${user.firstName} ${user.lastName}`;
+            document.getElementById('doctorRole').textContent = user.role === 'doctor' ? 'Medical Doctor' : 'Administrator';
+            document.getElementById('doctorSpecialization').textContent = user.specialization || 'General Physician';
+            document.getElementById('profileEmail').value = user.email || '';
+            document.getElementById('profilePhone').value = user.phone || '';
+            document.getElementById('profileSpecialization').value = user.specialization || '';
+            document.getElementById('currentUsername').value = user.username || '';
+           
+            // Load profile bio from localStorage
+            const doctorProfile = JSON.parse(localStorage.getItem(`doctor_profile_${user.id}`)) || {};
+            document.getElementById('profileBio').value = doctorProfile.bio || '';
+           
+            // Load avatar
+            const avatar = localStorage.getItem(`doctor_avatar_${user.id}`);
+            if (avatar) {
+                document.getElementById('avatarImage').src = avatar;
+                document.getElementById('avatarImage').style.display = 'block';
+                document.getElementById('avatarInitials').style.display = 'none';
+            } else {
+                document.getElementById('avatarInitials').textContent =
+                    `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+            }
+        }
+
+        // ========== SIDEBAR NAVIGATION ==========
+       
+        const sidebarNavLinks = document.querySelectorAll('.sidebar-nav-link');
+        const dashboardSections = document.querySelectorAll('.dashboard-section');
+       
+        sidebarNavLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // Remove active class from all links and sections
+                sidebarNavLinks.forEach(l => l.classList.remove('active'));
+                dashboardSections.forEach(s => s.classList.remove('active'));
+               
+                // Add active class to clicked link
+                this.classList.add('active');
+               
+                // Show corresponding section
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+               
+                // Load data for the section if needed
+                switch(sectionId) {
+                    case 'dashboard-overview':
+                        loadDashboardOverview();
+                        break;
+                    case 'appointments':
+                        loadAppointmentStats();
+                        break;
+                    case 'attendance':
+                        loadAttendanceData();
+                        break;
+                }
+            });
+        });
+
+        // Function to switch to specific section
+        function switchToSection(sectionId) {
+            // Remove active class from all links and sections
+            sidebarNavLinks.forEach(l => l.classList.remove('active'));
+            dashboardSections.forEach(s => s.classList.remove('active'));
+           
+            // Add active class to the target link
+            document.querySelector(`.sidebar-nav-link[data-section="${sectionId}"]`).classList.add('active');
+           
+            // Show corresponding section
+            document.getElementById(sectionId).classList.add('active');
+           
+            // Load data for the section if needed
+            switch(sectionId) {
+                case 'dashboard-overview':
+                    loadDashboardOverview();
+                    break;
+                case 'appointments':
+                    loadAppointmentStats();
+                    break;
+                case 'attendance':
+                    loadAttendanceData();
+                    break;
+            }
+        }
+
+        // ========== LOGOUT FUNCTIONALITY ==========
+       
+        document.getElementById('sidebarLogoutBtn').addEventListener('click', function() {
+            // Clear session storage
+            sessionStorage.removeItem('currentUser');
+           
+            // Redirect to index.html
+            window.location.href = 'index.html';
+        });
+
+        // ========== DASHBOARD OVERVIEW ==========
+
+        function loadDashboardOverview() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+           
+            // Load appointment stats
+            loadAppointmentStats();
+           
+            // Load medical reports count
+            const reports = JSON.parse(localStorage.getItem('northwoodMedicalReports')) || [];
+            const doctorName = `Dr. ${currentUser.firstName} ${currentUser.lastName}`;
+            const doctorReports = reports.filter(report => report.doctorName === doctorName);
+            document.getElementById('overviewTotalReports').textContent = doctorReports.length;
+           
+            // Load attendance rate
+            const attendance = JSON.parse(localStorage.getItem('northwoodAttendance')) || [];
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = 2026;
+           
+            const doctorAttendance = attendance.filter(record =>
+                record.staffId === currentUser.id &&
+                new Date(record.date).getFullYear() === currentYear
+            );
+           
+            const currentMonthRecords = doctorAttendance.filter(record =>
+                new Date(record.date).getMonth() === currentMonth
+            );
+           
+            const workingDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const presentDays = currentMonthRecords.filter(r => r.status === 'present').length;
+            const attendanceRate = workingDays > 0 ? Math.round((presentDays / workingDays) * 100) : 0;
+           
+            document.getElementById('overviewAttendanceRate').textContent = attendanceRate + '%';
+           
+            // Update other stats from appointment stats
+            setTimeout(() => {
+                document.getElementById('overviewTodayAppointments').textContent =
+                    document.getElementById('todayAppointmentsCount').textContent;
+                document.getElementById('overviewUpcomingAppointments').textContent =
+                    document.getElementById('upcomingAppointmentsCount').textContent;
+                document.getElementById('overviewCompletedAppointments').textContent =
+                    document.getElementById('completedAppointmentsCount').textContent;
+                document.getElementById('overviewTotalPatients').textContent =
+                    document.getElementById('totalPatients').textContent;
+            }, 100);
+        }
+
+        // Refresh dashboard button
+        document.getElementById('refreshDashboardBtn').addEventListener('click', function() {
+            loadDashboardOverview();
+        });
+
+        // ========== APPOINTMENTS MANAGEMENT ==========
+
+        function loadAppointments() {
+            const appointments = JSON.parse(localStorage.getItem('northwoodAppointments')) || [];
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const doctorName = `Dr. ${currentUser.firstName} ${currentUser.lastName}`;
+           
+            // Filter appointments for this doctor
+            const doctorAppointments = appointments.filter(appointment =>
+                appointment.doctor === doctorName ||
+                appointment.doctor === 'Any available doctor'
+            );
+           
+            const tableBody = document.getElementById('appointmentsTableBody');
+            const noAppointments = document.getElementById('noAppointments');
+           
+            if (doctorAppointments.length === 0) {
+                tableBody.innerHTML = '';
+                noAppointments.style.display = 'block';
+                return;
+            }
+           
+            noAppointments.style.display = 'none';
+           
+            // Sort appointments by date (newest first)
+            doctorAppointments.sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
+           
+            tableBody.innerHTML = doctorAppointments.map(appointment => `
+                <tr>
+                    <td>${formatDate(appointment.appointmentDate)}</td>
+                    <td>${appointment.appointmentTime}</td>
+                    <td>${appointment.patientName}</td>
+                    <td>${appointment.type === 'student' ? 'Student' : 'Staff'}</td>
+                    <td>${appointment.patientId}</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${appointment.reason}
+                    </td>
+                    <td>
+                        <span class="status-badge status-${appointment.status}">
+                            ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-view" onclick="viewAppointment('${appointment.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${appointment.status !== 'completed' ? `
+                                <button class="btn-icon btn-edit" onclick="completeAppointment('${appointment.id}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAppointmentStats() {
+            const appointments = JSON.parse(localStorage.getItem('northwoodAppointments')) || [];
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const doctorName = `Dr. ${currentUser.firstName} ${currentUser.lastName}`;
+            const today = new Date().toISOString().split('T')[0];
+           
+            // Filter appointments for this doctor
+            const doctorAppointments = appointments.filter(appointment =>
+                appointment.doctor === doctorName ||
+                appointment.doctor === 'Any available doctor'
+            );
+           
+            // Calculate statistics
+            const todayAppointments = doctorAppointments.filter(a => a.appointmentDate === today);
+            const upcomingAppointments = doctorAppointments.filter(a => a.appointmentDate > today);
+            const completedAppointments = doctorAppointments.filter(a => a.status === 'completed');
+           
+            // Count unique patients
+            const patientIds = new Set();
+            doctorAppointments.forEach(a => patientIds.add(a.patientId));
+           
+            document.getElementById('todayAppointmentsCount').textContent = todayAppointments.length;
+            document.getElementById('upcomingAppointmentsCount').textContent = upcomingAppointments.length;
+            document.getElementById('completedAppointmentsCount').textContent = completedAppointments.length;
+            document.getElementById('totalPatients').textContent = patientIds.size;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function viewAppointment(appointmentId) {
+            const appointments = JSON.parse(localStorage.getItem('northwoodAppointments')) || [];
+            const appointment = appointments.find(a => a.id === appointmentId);
+           
+            if (!appointment) return;
+           
+            const content = document.getElementById('appointmentDetailsContent');
+            content.innerHTML = `
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px;">Patient Information</h3>
+                    <p><strong>Name:</strong> ${appointment.patientName}</p>
+                    <p><strong>Type:</strong> ${appointment.type === 'student' ? 'Student' : 'Staff'}</p>
+                    <p><strong>ID Number:</strong> ${appointment.patientId}</p>
+                    <p><strong>Email:</strong> ${appointment.patientEmail}</p>
+                    <p><strong>Phone:</strong> ${appointment.patientPhone}</p>
+                </div>
+               
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px;">Appointment Details</h3>
+                    <p><strong>Date:</strong> ${formatDate(appointment.appointmentDate)}</p>
+                    <p><strong>Time:</strong> ${appointment.appointmentTime}</p>
+                    <p><strong>Doctor:</strong> ${appointment.doctor}</p>
+                    <p><strong>Status:</strong>
+                        <span class="status-badge status-${appointment.status}">
+                            ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                        </span>
+                    </p>
+                </div>
+               
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px;">Reason for Visit</h3>
+                    <p>${appointment.reason}</p>
+                </div>
+               
+                <div>
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px;">Timestamps</h3>
+                    <p><strong>Booked At:</strong> ${new Date(appointment.bookedAt).toLocaleString()}</p>
+                    ${appointment.confirmedAt ? `<p><strong>Confirmed At:</strong> ${new Date(appointment.confirmedAt).toLocaleString()}</p>` : ''}
+                    ${appointment.completedAt ? `<p><strong>Completed At:</strong> ${new Date(appointment.completedAt).toLocaleString()}</p>` : ''}
+                </div>
+               
+                ${appointment.status !== 'completed' ? `
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button class="btn btn-primary" onclick="completeAppointment('${appointment.id}')" style="width: 100%;">
+                            <i class="fas fa-check"></i> Mark as Completed
+                        </button>
+                    </div>
+                ` : ''}
+            `;
+           
+            // Open modal
+            document.getElementById('appointmentDetailsModal').classList.add('active');
+        }
+
+        function completeAppointment(appointmentId) {
+            const appointments = JSON.parse(localStorage.getItem('northwoodAppointments')) || [];
+            const appointmentIndex = appointments.findIndex(a => a.id === appointmentId);
+           
+            if (appointmentIndex !== -1) {
+                appointments[appointmentIndex].status = 'completed';
+                appointments[appointmentIndex].completedAt = new Date().toISOString();
+               
+                localStorage.setItem('northwoodAppointments', JSON.stringify(appointments));
+               
+                // Reload data
+                loadAppointments();
+                loadAppointmentStats();
+                loadDashboardOverview();
+               
+                // Close modal if open
+                document.getElementById('appointmentDetailsModal').classList.remove('active');
+               
+                alert('Appointment marked as completed!');
+            }
+        }
+
+        // Refresh appointments button
+        document.getElementById('refreshAppointmentsBtn').addEventListener('click', function() {
+            loadAppointments();
+            loadAppointmentStats();
+        });
+
+        // ========== MEDICAL REPORTS ==========
+
+        let currentEditingReportId = null;
+
+        function loadMedicalReports() {
+            const reports = JSON.parse(localStorage.getItem('northwoodMedicalReports')) || [];
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const doctorName = `Dr. ${currentUser.firstName} ${currentUser.lastName}`;
+           
+            // Filter reports for this doctor
+            const doctorReports = reports.filter(report => report.doctorName === doctorName);
+           
+            const reportsList = document.getElementById('medicalReportsList');
+            const noReports = document.getElementById('noMedicalReports');
+           
+            if (doctorReports.length === 0) {
+                reportsList.innerHTML = '';
+                noReports.style.display = 'block';
+                return;
+            }
+           
+            noReports.style.display = 'none';
+           
+            // Sort reports by date (newest first)
+            doctorReports.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate));
+           
+            reportsList.innerHTML = doctorReports.map(report => `
+                <div class="medical-report-card">
+                    <div class="report-header">
+                        <div class="report-patient-info">
+                            <h3>${report.patientName}</h3>
+                            <div class="report-meta">
+                                <span>${report.patientType === 'student' ? 'Student' : 'Staff'} • ID: ${report.patientId}</span>
+                                <span>Diagnosis: ${report.diagnosis.substring(0, 50)}${report.diagnosis.length > 50 ? '...' : ''}</span>
+                            </div>
+                        </div>
+                        <div class="report-date">
+                            ${formatDate(report.reportDate)} ${report.reportTime}
+                        </div>
+                    </div>
+                   
+                    <div class="report-summary">
+                        <p><strong>Symptoms:</strong> ${report.symptoms.substring(0, 150)}${report.symptoms.length > 150 ? '...' : ''}</p>
+                    </div>
+                   
+                    <div class="report-details">
+                        <h4><i class="fas fa-stethoscope"></i> Treatment Details</h4>
+                        <div class="report-details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Doctor</span>
+                                <span class="detail-value">${report.doctorName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value">
+                                    <span class="status-badge ${report.status === 'active' ? 'status-pending' : report.status === 'completed' ? 'status-confirmed' : 'status-cancelled'}">
+                                        ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Follow-up</span>
+                                <span class="detail-value">${report.followUp ? 'Required' : 'Not Required'}</span>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-view" onclick="viewMedicalReport('${report.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon btn-edit" onclick="editMedicalReport('${report.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon btn-delete" onclick="deleteMedicalReport('${report.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewMedicalReport(reportId) {
+            const reports = JSON.parse(localStorage.getItem('northwoodMedicalReports')) || [];
+            const report = reports.find(r => r.id === reportId);
+           
+            if (!report) return;
+           
+            // Create a detailed view modal
+            const content = document.getElementById('appointmentDetailsContent');
+            content.innerHTML = `
+                <div style="margin-bottom: 25px;">
+                    <h2 style="color: var(--primary-blue); margin-bottom: 15px; text-align: center;">Medical Report</h2>
+                    <div style="background: var(--soft-blue); padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <div>
+                                <h3 style="color: var(--primary-blue); margin-bottom: 5px;">${report.patientName}</h3>
+                                <p>${report.patientType === 'student' ? 'Student' : 'Staff'} • ID: ${report.patientId}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="background: var(--light-blue); color: var(--primary-blue); padding: 5px 15px; border-radius: 20px; font-weight: 600;">
+                                    ${formatDate(report.reportDate)} ${report.reportTime}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <div style="font-size: 0.85rem; color: var(--text-light);">Doctor</div>
+                                <div style="font-weight: 600;">${report.doctorName}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85rem; color: var(--text-light);">Status</div>
+                                <div>
+                                    <span class="status-badge ${report.status === 'active' ? 'status-pending' : report.status === 'completed' ? 'status-confirmed' : 'status-cancelled'}">
+                                        ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user-injured"></i> Symptoms & Complaints
+                    </h3>
+                    <div style="background: white; padding: 20px; border-radius: var(--border-radius-sm); border: 1px solid var(--light-gray);">
+                        ${report.symptoms.split('\n').map(para => `<p style="margin-bottom: 10px;">${para}</p>`).join('')}
+                    </div>
+                </div>
+               
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-diagnoses"></i> Diagnosis
+                    </h3>
+                    <div style="background: white; padding: 20px; border-radius: var(--border-radius-sm); border: 1px solid var(--light-gray);">
+                        ${report.diagnosis.split('\n').map(para => `<p style="margin-bottom: 10px;">${para}</p>`).join('')}
+                    </div>
+                </div>
+               
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-pills"></i> Treatment Provided
+                    </h3>
+                    <div style="background: white; padding: 20px; border-radius: var(--border-radius-sm); border: 1px solid var(--light-gray);">
+                        ${report.treatment.split('\n').map(para => `<p style="margin-bottom: 10px;">${para}</p>`).join('')}
+                    </div>
+                </div>
+               
+                ${report.followUp ? `
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-calendar-check"></i> Follow-up Recommendations
+                        </h3>
+                        <div style="background: white; padding: 20px; border-radius: var(--border-radius-sm); border: 1px solid var(--light-gray);">
+                            ${report.followUp.split('\n').map(para => `<p style="margin-bottom: 10px;">${para}</p>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+               
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="printMedicalReport('${report.id}')">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                </div>
+            `;
+           
+            // Open modal
+            document.getElementById('appointmentDetailsModal').classList.add('active');
+        }
+
+        function printMedicalReport(reportId) {
+            // This would open a print-friendly version of the report
+            alert('Print functionality would open a print-friendly version of the medical report.');
+        }
+
+        function editMedicalReport(reportId) {
+            const reports = JSON.parse(localStorage.getItem('northwoodMedicalReports')) || [];
+            const report = reports.find(r => r.id === reportId);
+           
+            if (!report) return;
+           
+            currentEditingReportId = reportId;
+           
+            // Set modal title
+            document.getElementById('modalReportTitle').textContent = 'Edit Medical Report';
+           
+            // Fill form with report data
+            document.getElementById('reportPatientName').value = report.patientName;
+            document.getElementById('reportPatientId').value = report.patientId;
+            document.getElementById('reportPatientType').value = report.patientType;
+            document.getElementById('reportDate').value = report.reportDate;
+            document.getElementById('reportTime').value = report.reportTime;
+            document.getElementById('reportSymptoms').value = report.symptoms;
+            document.getElementById('reportDiagnosis').value = report.diagnosis;
+            document.getElementById('reportTreatment').value = report.treatment;
+            document.getElementById('reportFollowUp').value = report.followUp || '';
+            document.getElementById('reportStatus').value = report.status;
+           
+            // Open modal
+            document.getElementById('medicalReportModal').classList.add('active');
+        }
+
+        function deleteMedicalReport(reportId) {
+            if (confirm('Are you sure you want to delete this medical report? This action cannot be undone.')) {
+                let reports = JSON.parse(localStorage.getItem('northwoodMedicalReports')) || [];
+                reports = reports.filter(r => r.id !== reportId);
+               
+                localStorage.setItem('northwoodMedicalReports', JSON.stringify(reports));
+               
+                // Reload data
+                loadMedicalReports();
+                loadDashboardOverview();
+               
+                alert('Medical report deleted successfully!');
+            }
+        }
+
+        // Add report button
+        document.getElementById('addReportBtn').addEventListener('click', function() {
+            currentEditingReportId = null;
+           
+            // Set modal title
+            document.getElementById('modalReportTitle').textContent = 'Create Medical Report';
+           
+            // Reset form (except doctor name and date/time)
+            document.getElementById('medicalReportForm').reset();
+           
+            // Set doctor name
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            document.getElementById('reportDoctorName').value = `Dr. ${currentUser.firstName} ${currentUser.lastName}`;
+           
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reportDate').value = today;
+           
+            // Set current time
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('reportTime').value = `${hours}:${minutes}`;
+           
+            // Open modal
+            document.getElementById('medicalReportModal').classList.add('active');
+        });
+
+        // Medical report form submission
+        document.getElementById('medicalReportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+           
+            // Get form values
+            const patientName = document.getElementById('reportPatientName').value;
+            const patientId = document.getElementById('reportPatientId').value;
+            const patientType = document.getElementById('reportPatientType').value;
+            const reportDate = document.getElementById('reportDate').value;
+            const reportTime = document.getElementById('reportTime').value;
+            const symptoms = document.getElementById('reportSymptoms').value;
+            const diagnosis = document.getElementById('reportDiagnosis').value;
+            const treatment = document.getElementById('reportTreatment').value;
+            const followUp = document.getElementById('reportFollowUp').value;
+            const doctorName = document.getElementById('reportDoctorName').value;
+            const status = document.getElementById('reportStatus').value;
+           
+            // Get existing reports
+            let reports = JSON.parse(localStorage.getItem('northwoodMedicalReports')) || [];
+           
+            if (currentEditingReportId) {
+                // Editing existing report
+                const index = reports.findIndex(r => r.id === currentEditingReportId);
+                if (index !== -1) {
+                    reports[index] = {
+                        ...reports[index],
+                        patientName,
+                        patientId,
+                        patientType,
+                        reportDate,
+                        reportTime,
+                        symptoms,
+                        diagnosis,
+                        treatment,
+                        followUp,
+                        doctorName,
+                        status,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+            } else {
+                // Adding new report
+                // Generate report ID
+                const timestamp = Date.now();
+                const random = Math.floor(Math.random() * 1000);
+                const newId = `MR-${timestamp}-${random}`;
+               
+                // Create new report object
+                const newReport = {
+                    id: newId,
+                    patientName,
+                    patientId,
+                    patientType,
+                    reportDate,
+                    reportTime,
+                    symptoms,
+                    diagnosis,
+                    treatment,
+                    followUp,
+                    doctorName,
+                    status,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+               
+                reports.push(newReport);
+            }
+           
+            // Save to localStorage
+            localStorage.setItem('northwoodMedicalReports', JSON.stringify(reports));
+           
+            // Reload data
+            loadMedicalReports();
+            loadDashboardOverview();
+           
+            // Close modal
+            document.getElementById('medicalReportModal').classList.remove('active');
+           
+            alert(currentEditingReportId ? 'Medical report updated successfully!' : 'Medical report created successfully!');
+        });
+
+        // ========== ATTENDANCE MANAGEMENT ==========
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+           
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        function checkTodayAttendance() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const today = new Date().toISOString().split('T')[0];
+           
+            // Get today's attendance record for this doctor
+            const attendance = JSON.parse(localStorage.getItem('northwoodAttendance')) || [];
+            const todayRecord = attendance.find(record =>
+                record.date === today && record.staffId === currentUser.id
+            );
+           
+            if (todayRecord) {
+                document.getElementById('timeInValue').textContent = todayRecord.timeIn || '--:--';
+                document.getElementById('timeOutValue').textContent = todayRecord.timeOut || '--:--';
+               
+                if (todayRecord.timeIn && !todayRecord.timeOut) {
+                    document.getElementById('attendanceStatus').textContent = 'Clocked In - Working';
+                    document.getElementById('timeInControls').style.display = 'none';
+                    document.getElementById('timeOutControls').style.display = 'block';
+                } else if (todayRecord.timeIn && todayRecord.timeOut) {
+                    document.getElementById('attendanceStatus').textContent = 'Clocked Out';
+                    document.getElementById('timeInControls').style.display = 'none';
+                    document.getElementById('timeOutControls').style.display = 'none';
+                }
+            }
+        }
+
+        function loadAttendanceData() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const attendance = JSON.parse(localStorage.getItem('northwoodAttendance')) || [];
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = 2026; // Fixed to 2026 as requested
+           
+            // Filter current month records for this doctor
+            const doctorAttendance = attendance.filter(record =>
+                record.staffId === currentUser.id &&
+                new Date(record.date).getFullYear() === currentYear
+            );
+           
+            const currentMonthRecords = doctorAttendance.filter(record =>
+                new Date(record.date).getMonth() === currentMonth
+            );
+           
+            // Calculate statistics
+            const workingDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const presentDays = currentMonthRecords.filter(r => r.status === 'present').length;
+            const attendanceRate = workingDays > 0 ? Math.round((presentDays / workingDays) * 100) : 0;
+           
+            // Calculate total hours
+            let totalHours = 0;
+            currentMonthRecords.forEach(record => {
+                if (record.totalHours && record.totalHours !== 'N/A') {
+                    totalHours += parseFloat(record.totalHours);
+                }
+            });
+           
+            const avgHours = presentDays > 0 ? (totalHours / presentDays).toFixed(1) : '0.0';
+           
+            // Update UI
+            document.getElementById('workingDays').textContent = workingDays;
+            document.getElementById('presentDays').textContent = presentDays;
+            document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+            document.getElementById('attendanceBar').style.width = attendanceRate + '%';
+            document.getElementById('avgHours').textContent = avgHours + 'h';
+            document.getElementById('totalHours').textContent = totalHours.toFixed(1) + 'h';
+           
+            // Load attendance history for current month
+            loadAttendanceHistory(currentMonth, '');
+        }
+
+        function loadAttendanceHistory(month, status = '') {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const attendance = JSON.parse(localStorage.getItem('northwoodAttendance')) || [];
+            const currentYear = 2026;
+           
+            // Filter attendance for selected month and year
+            let monthAttendance = attendance.filter(record => {
+                const recordDate = new Date(record.date);
+                return record.staffId === currentUser.id &&
+                       recordDate.getMonth() === month &&
+                       recordDate.getFullYear() === currentYear;
+            });
+           
+            // Apply status filter if provided
+            if (status) {
+                monthAttendance = monthAttendance.filter(record => record.status === status);
+            }
+           
+            const historyList = document.getElementById('attendanceHistoryList');
+            const noHistory = document.getElementById('noAttendanceHistory');
+           
+            if (monthAttendance.length === 0) {
+                historyList.innerHTML = '';
+                noHistory.style.display = 'block';
+                return;
+            }
+           
+            noHistory.style.display = 'none';
+           
+            // Sort by date (newest first)
+            monthAttendance.sort((a, b) => new Date(b.date) - new Date(a.date));
+           
+            historyList.innerHTML = monthAttendance.map(record => `
+                <div class="history-item">
+                    <div class="history-date">${formatDate(record.date)}</div>
+                    <div class="history-times">
+                        <div class="history-time">
+                            <div class="time-value">${record.timeIn || '--:--'}</div>
+                        </div>
+                        <div class="history-time">
+                            <div class="time-value">${record.timeOut || '--:--'}</div>
+                        </div>
+                        <div class="history-time">
+                            <div class="time-value">${record.totalHours || '0.0h'}</div>
+                        </div>
+                        <div class="history-time">
+                            <div class="time-value">
+                                <span class="status-badge ${record.status === 'present' ? 'status-confirmed' : 'status-cancelled'}">
+                                    ${record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Time In button
+        document.getElementById('timeInBtn').addEventListener('click', function() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const timeIn = now.getHours().toString().padStart(2, '0') + ':' +
+                          now.getMinutes().toString().padStart(2, '0');
+           
+            // Get or create attendance record
+            let attendance = JSON.parse(localStorage.getItem('northwoodAttendance')) || [];
+            const existingIndex = attendance.findIndex(record =>
+                record.date === today && record.staffId === currentUser.id
+            );
+           
+            if (existingIndex !== -1) {
+                // Update existing record
+                attendance[existingIndex].timeIn = timeIn;
+                attendance[existingIndex].status = 'present';
+                attendance[existingIndex].updatedAt = new Date().toISOString();
+            } else {
+                // Create new record
+                const newRecord = {
+                    id: `ATT-${today.replace(/-/g, '')}-${currentUser.id}`,
+                    date: today,
+                    staffId: currentUser.id,
+                    staffName: `${currentUser.firstName} ${currentUser.lastName}`,
+                    role: 'Doctor',
+                    timeIn: timeIn,
+                    timeOut: null,
+                    totalHours: '0.0',
+                    status: 'present',
+                    remarks: '',
+                    recordedBy: 'doctor',
+                    recordedAt: new Date().toISOString()
+                };
+                attendance.push(newRecord);
+            }
+           
+            localStorage.setItem('northwoodAttendance', JSON.stringify(attendance));
+           
+            // Update UI
+            document.getElementById('timeInValue').textContent = timeIn;
+            document.getElementById('attendanceStatus').textContent = 'Clocked In - Working';
+            document.getElementById('timeInControls').style.display = 'none';
+            document.getElementById('timeOutControls').style.display = 'block';
+           
+            alert('Time In recorded successfully!');
+        });
+
+        // Time Out button
+        document.getElementById('timeOutBtn').addEventListener('click', function() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const timeOut = now.getHours().toString().padStart(2, '0') + ':' +
+                           now.getMinutes().toString().padStart(2, '0');
+           
+            // Get attendance record
+            let attendance = JSON.parse(localStorage.getItem('northwoodAttendance')) || [];
+            const existingIndex = attendance.findIndex(record =>
+                record.date === today && record.staffId === currentUser.id
+            );
+           
+            if (existingIndex !== -1) {
+                // Calculate total hours
+                const timeIn = attendance[existingIndex].timeIn;
+                if (timeIn) {
+                    const [inHours, inMinutes] = timeIn.split(':').map(Number);
+                    const [outHours, outMinutes] = timeOut.split(':').map(Number);
+                   
+                    const inTime = inHours + inMinutes / 60;
+                    const outTime = outHours + outMinutes / 60;
+                    let totalHours = outTime - inTime;
+                   
+                    // Adjust for overnight shift
+                    if (totalHours < 0) totalHours += 24;
+                   
+                    attendance[existingIndex].timeOut = timeOut;
+                    attendance[existingIndex].totalHours = totalHours.toFixed(1);
+                    attendance[existingIndex].updatedAt = new Date().toISOString();
+                   
+                    localStorage.setItem('northwoodAttendance', JSON.stringify(attendance));
+                   
+                    // Update UI
+                    document.getElementById('timeOutValue').textContent = timeOut;
+                    document.getElementById('attendanceStatus').textContent = 'Clocked Out';
+                    document.getElementById('timeOutControls').style.display = 'none';
+                   
+                    alert(`Time Out recorded successfully! Total hours: ${totalHours.toFixed(1)}`);
+                }
+            }
+        });
+
+        function printAttendanceReport() {
+            window.print();
+        }
+
+        // Filter attendance history
+        document.getElementById('applyHistoryFilter').addEventListener('click', function() {
+            const month = parseInt(document.getElementById('filterHistoryMonth').value) - 1; // 0-indexed
+            const status = document.getElementById('filterHistoryStatus').value;
+            loadAttendanceHistory(month, status);
+        });
+
+        document.getElementById('resetHistoryFilter').addEventListener('click', function() {
+            document.getElementById('filterHistoryMonth').value = '1';
+            document.getElementById('filterHistoryStatus').value = '';
+            loadAttendanceHistory(0, ''); // January, no status filter
+        });
+
+        // ========== PROFILE MANAGEMENT ==========
+
+        // Change avatar button
+        document.getElementById('changeAvatarBtn').addEventListener('click', function() {
+            document.getElementById('avatarUpload').click();
+        });
+
+        document.getElementById('avatarUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+           
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file.');
+                return;
+            }
+           
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size must be less than 2MB.');
+                return;
+            }
+           
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+               
+                // Save avatar to localStorage
+                localStorage.setItem(`doctor_avatar_${currentUser.id}`, e.target.result);
+               
+                // Update avatar display
+                document.getElementById('avatarImage').src = e.target.result;
+                document.getElementById('avatarImage').style.display = 'block';
+                document.getElementById('avatarInitials').style.display = 'none';
+               
+                // Update sidebar avatar
+                const sidebarUserAvatar = document.getElementById('sidebarUserAvatar');
+                sidebarUserAvatar.innerHTML = `<img src="${e.target.result}" alt="${currentUser.firstName} ${currentUser.lastName}">`;
+               
+                alert('Avatar updated successfully!');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Save profile button
+        document.getElementById('saveProfileBtn').addEventListener('click', function() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+           
+            // Update user data
+            const email = document.getElementById('profileEmail').value;
+            const phone = document.getElementById('profilePhone').value;
+            const specialization = document.getElementById('profileSpecialization').value;
+            const bio = document.getElementById('profileBio').value;
+           
+            // Update current user in session storage
+            currentUser.email = email;
+            currentUser.phone = phone;
+            currentUser.specialization = specialization;
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+           
+            // Update user in staff list
+            const staffMembers = JSON.parse(localStorage.getItem('northwoodStaffUsers')) || [];
+            const userIndex = staffMembers.findIndex(s => s.id === currentUser.id);
+            if (userIndex !== -1) {
+                staffMembers[userIndex].email = email;
+                staffMembers[userIndex].phone = phone;
+                staffMembers[userIndex].specialization = specialization;
+                localStorage.setItem('northwoodStaffUsers', JSON.stringify(staffMembers));
+            }
+           
+            // Save profile bio
+            const doctorProfile = {
+                bio: bio,
+                updatedAt: new Date().toISOString()
+            };
+            localStorage.setItem(`doctor_profile_${currentUser.id}`, JSON.stringify(doctorProfile));
+           
+            // Update display
+            displayDoctorInfo(currentUser);
+           
+            alert('Profile updated successfully!');
+        });
+
+        // Change username form
+        document.getElementById('changeUsernameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+           
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const newUsername = document.getElementById('newUsername').value;
+           
+            if (!newUsername) {
+                alert('Please enter a new username.');
+                return;
+            }
+           
+            // Check if username already exists
+            const staffMembers = JSON.parse(localStorage.getItem('northwoodStaffUsers')) || [];
+            const usernameExists = staffMembers.some(user =>
+                user.username === newUsername && user.id !== currentUser.id
+            );
+           
+            if (usernameExists) {
+                alert('Username already exists. Please choose a different username.');
+                return;
+            }
+           
+            // Update username
+            currentUser.username = newUsername;
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+           
+            // Update in staff list
+            const userIndex = staffMembers.findIndex(s => s.id === currentUser.id);
+            if (userIndex !== -1) {
+                staffMembers[userIndex].username = newUsername;
+                localStorage.setItem('northwoodStaffUsers', JSON.stringify(staffMembers));
+            }
+           
+            // Update form
+            document.getElementById('currentUsername').value = newUsername;
+            document.getElementById('newUsername').value = '';
+           
+            alert('Username changed successfully!');
+        });
+
+        // Change password form
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+           
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+           
+            // Validate current password
+            if (currentPassword !== currentUser.password) {
+                alert('Current password is incorrect.');
+                return;
+            }
+           
+            if (newPassword.length < 6) {
+                alert('New password must be at least 6 characters long.');
+                return;
+            }
+           
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match.');
+                return;
+            }
+           
+            // Update password
+            currentUser.password = newPassword;
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+           
+            // Update in staff list
+            const staffMembers = JSON.parse(localStorage.getItem('northwoodStaffUsers')) || [];
+            const userIndex = staffMembers.findIndex(s => s.id === currentUser.id);
+            if (userIndex !== -1) {
+                staffMembers[userIndex].password = newPassword;
+                localStorage.setItem('northwoodStaffUsers', JSON.stringify(staffMembers));
+            }
+           
+            // Reset form
+            document.getElementById('changePasswordForm').reset();
+           
+            alert('Password changed successfully!');
+        });
+
+        // ========== FILTER FUNCTIONALITY ==========
+
+        // Apply appointment filter
+        document.getElementById('applyAppointmentFilter').addEventListener('click', function() {
+            // In a real application, this would filter the appointments table
+            alert('Filter applied! In a real application, this would filter the appointments table.');
+        });
+
+        // Reset appointment filter
+        document.getElementById('resetAppointmentFilter').addEventListener('click', function() {
+            document.getElementById('filterAppointmentsForm').reset();
+        });
+
+        // Apply report filter
+        document.getElementById('applyReportFilter').addEventListener('click', function() {
+            // In a real application, this would filter the reports list
+            alert('Filter applied! In a real application, this would filter the reports list.');
+        });
+
+        // Reset report filter
+        document.getElementById('resetReportFilter').addEventListener('click', function() {
+            document.getElementById('filterReportsForm').reset();
+        });
+
+        // ========== MODAL MANAGEMENT ==========
+
+        // Close appointment details modal
+        document.getElementById('closeAppointmentDetailsModal').addEventListener('click', function() {
+            document.getElementById('appointmentDetailsModal').classList.remove('active');
+        });
+
+        // Close medical report modal
+        document.getElementById('closeMedicalReportModal').addEventListener('click', function() {
+            document.getElementById('medicalReportModal').classList.remove('active');
+        });
+
+        document.getElementById('cancelReportBtn').addEventListener('click', function() {
+            document.getElementById('medicalReportModal').classList.remove('active');
+        });
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        // ========== INITIALIZE ==========
+
+        // Initialize on load
+        loadDashboardOverview();
+        loadAttendanceHistory(0); // Load January 2026 by default
+    </script>
+</body>
+</html>
